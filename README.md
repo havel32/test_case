@@ -37,5 +37,6 @@ Navigate to the /lib directory and open the main.dart file in your editor.
 
 ### 4. Run the App
 - Make sure you have an emulator set up (Select either Chrome, the Android Studio emulator, or your smartphone connected directly to the device as an emulator.).
+![Emulator setting](screenshots\help.png)
 - To run the application, press CTRL + F5 in VS Code or use the 'Run' button in Android Studio.
 and press CTRL + F5

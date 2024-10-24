@@ -82,7 +82,7 @@ class SensorListScreenState extends State<SensorListScreen>{
                 color: logicViewModel.getStatusColor(sensor.status),
               ),
               title: Text(sensor.name),
-              subtitle: Text('Status: ${sensor.status}'),
+              subtitle: Text('Status: ${logicViewModel.getStatusTXT(sensor.status)}'),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () async {
                 // Navigate to the SensorDetailScreen when a sensor is tapped
@@ -200,17 +200,7 @@ class SensorDetailScreenState extends State<SensorDetailScreen>{
                                 DataRow(cells: [
                                 DataCell(Text(widget.sensor.sensorId.toString(), style: TextStyle(fontSize: textSize))),
                                 DataCell(Text(widget.sensor.name, style: TextStyle(fontSize: textSize))),
-                                DataCell(Row(
-                                  children: [
-                                    Icon(
-                                      logicViewModel.getStatusIcon(widget.sensor.status),
-                                      size: textSize, // Adjust icon size as well
-                                      color: logicViewModel.getStatusColor(widget.sensor.status)
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(widget.sensor.status.toString(), style: TextStyle(fontSize: textSize)),
-                                  ],
-                                )),
+                                DataCell(Text(logicViewModel.getStatusTXT(widget.sensor.status), style: TextStyle(fontSize: textSize))),
                                 DataCell(Text(widget.sensor.temperature != null ? widget.sensor.temperature.toString() : 'N/A', style: TextStyle(fontSize: textSize))),
                                 DataCell(Text(widget.sensor.humidity != null ? widget.sensor.humidity.toString() : 'N/A', style: TextStyle(fontSize: textSize))),
                             ]),

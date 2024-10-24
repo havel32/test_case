@@ -78,5 +78,31 @@ class SensorViewModel extends ChangeNotifier{
         return Icons.help;
     }
   }
+
+  // Function to get an icon by status
+  String getStatusTXT(int status) {
+    switch (status) {
+      case 1:
+        return "Готов";
+      case 2:
+        return "Тревога";
+      case 3:
+        return "Пожар";
+      case 4:
+        return "Корпус открыт";
+      case 5:
+        return "Корпус закрыт";
+      case 6:
+        return "Потерян";
+      case 7:
+        return "Низкий заряд батареи";
+      case 8:
+        return "Событие по температуре";
+      case 9:
+        return "Событие по влажности";
+      default:
+        return "Неизвестно";
+    }
+  }
 }
 

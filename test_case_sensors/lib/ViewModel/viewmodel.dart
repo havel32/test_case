@@ -136,5 +136,30 @@ class SensorViewModel extends ChangeNotifier{
         return "Неизвестно";
     }
   }
+
+  /*
+  * Method to check if the input contains any special characters except space, "-", "_"
+  */
+  String? containsSpecialSymbol(String input){
+    final specialCharRegExp = RegExp(r'^[A-Za-zА-яЁё0-9-_\s]+$');
+    if (!specialCharRegExp.hasMatch(input)){
+      return 'Invalid input! Special symbols are not allowed in the name of sensor, exept "-", "_"';
+    }
+    else{
+      return null;
+    }
+  }
+
+  /*
+  * Method to check if input is empty
+  */
+  String? isEmpty(String? value){
+    if (value == null || cleanUpSpaces(value).isEmpty == true){
+      return 'Invalid input! Please enter a sensor name.';
+    }
+    else{
+      return null;
+    }
+  }
 }
 

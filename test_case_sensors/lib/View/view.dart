@@ -27,7 +27,6 @@ class SensorListScreenState extends State<SensorListScreen>{
   @override
   Widget build(BuildContext context) {
     final int count = widget.sensors.length;
-
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
@@ -132,7 +131,7 @@ class SensorDetailScreenState extends State<SensorDetailScreen>{
   void initState() {
     super.initState();
     // Initialize the controller with the sensor's current name, if sensor got 'N/A' name it's replaced by ''
-    _nameController = TextEditingController(text: widget.sensor.name != 'N/A' ? widget.sensor.name : '');
+    _nameController = TextEditingController(text: widget.sensor.name != 'Nameless' ? widget.sensor.name : '');
   }
 
   @override
@@ -227,11 +226,11 @@ class SensorDetailScreenState extends State<SensorDetailScreen>{
                   ),
                   // Validator to ensure the name is valid and has no special characters
                   validator: (value){
-                    if (value == null || value.isEmpty){
-                      return 'Please enter a sensor name';
+                    if (value == null || logicViewModel.cleanUpSpaces(value).isEmpty == true){
+                      return 'Invalid input! Please enter a sensor name';
                     }
                     if (containsSpecialSymbol(value)){
-                      return 'Special symbols are not allowed in the name of sensor, exept "-", "_"';
+                      return 'Invalid input! Special symbols are not allowed in the name of sensor, exept "-", "_"';
                     }
                     return null;
                   },

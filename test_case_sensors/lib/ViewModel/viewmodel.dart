@@ -1,30 +1,62 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import '../Models/model.dart';
 
 
 /*
-* ViewModel class that interacts with the SensorModel and provides data 
-* to View.
+*   ViewModel class that interacts with the SensorModel and provides data 
+*   to View.
 */
 class SensorViewModel extends ChangeNotifier{
   final SensorModel model;
   SensorViewModel({required this.model });
 
   /*
-  *   Loads the list of sensors asynchronously using the model's data-fetching method.
-  *   Returns a future that resolves to a list of sensors.
+  *   Method for deleting extra spaces from input
   */
-  Future<List<Sensor>> loadSensors() async {
-    return await model.fetchSensorsFromAssets();
+  String cleanUpSpaces(String value) {
+    return value.trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 
   /* 
   *   Updates the name of a sensor based on its [sensorId] and [newName].
   *   Locates the sensor in the provided list and modifies its name.
   */ 
-  void updateSensorName(List<Sensor> sensors, int sensorId, String newName){
+  void updateSensorName(List<Sensor> sensors, int sensorId, String newName) {
+    //  Cleaning input name
+    final cleanedName = cleanUpSpaces(newName);
+
+    //print(sensorId);
     final sensor = sensors.firstWhere((s) => s.sensorId == sensorId);
-    sensor.name = newName;
+
+    //print('${sensor.sensorId} with name ${sensor.name} found');
+    sensor.name = cleanedName;
+
+    //print('$Renameing to $newNameTrimmed');
+    model.saveSensorName(sensorId, cleanedName);
+
+    notifyListeners();
+  }
+
+  //  Method for loading updated names from shared_preferences
+  Future<void> loadUpdatedNames(List<Sensor> sensors) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    for (var sensor in sensors){
+      String? updatedName = prefs.getString('sensor_name_${sensor.sensorId}');
+      if (updatedName != null){
+        sensor.name = updatedName;
+      }
+    }
+  }
+
+  /*
+  *   Loads the list of sensors asynchronously using the model's data-fetching method.
+  *   Returns a future that resolves to a list of sensors.
+  */
+  Future<List<Sensor>> loadSensors() async {
+    List<Sensor> sensors = await model.fetchSensorsFromAssets();
+    return sensors;
   }
 
   // Function to get a color by status 

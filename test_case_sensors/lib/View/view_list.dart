@@ -84,7 +84,7 @@ class SearchBar extends StatelessWidget {
           // Reset button
           IconButton(
             icon: const Icon(Icons.clear),
-            onPressed: () => logicViewModel.clearSearch(context, nameController),
+            onPressed: () => logicViewModel.performSearch(context, nameController),
           ),
         ],
       );
@@ -137,7 +137,7 @@ class SensorCard extends StatelessWidget {
                 Text('Status: ${logicViewModel.getStatusTXT(sensor.status)}'),
             trailing: const Icon(Icons.arrow_forward),
             onTap: () async {
-              // Переход на экран деталей сенсора
+              // Navigate to the SensorDetailScreen when a sensor is tapped
               final newName = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -145,7 +145,7 @@ class SensorCard extends StatelessWidget {
                 ),
               );
 
-              // Обновляем имя сенсора, если было введено новое
+              // Update the sensor name if a new one was entered
               if (newName != null) {
                 logicViewModel.updateSensorName(sensor.sensorId, newName);
               }

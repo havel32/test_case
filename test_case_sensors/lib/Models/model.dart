@@ -46,7 +46,9 @@ class Sensor {
 
 // Class that handles loading sensor data
 class SensorModel{
-  //Method to fetch sensor data from a JSON file stored in the app's assets
+  /*
+  * Method to fetch sensor data from a JSON file stored in the app's assets
+  */
   Future<List<Sensor>> fetchSensorsFromAssets() async {
     String jsonString = await rootBundle.loadString('assets/data.json');
     final List<dynamic> jsonData = jsonDecode(jsonString);
@@ -56,6 +58,9 @@ class SensorModel{
     return sensors;
   }
 
+  /*
+  * Method for loading sensors whose names was changed on this device
+  */
   Future<void> loadSavedSensors(List<Sensor> sensors) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -67,7 +72,9 @@ class SensorModel{
     }
   }
 
-
+  /*
+  * Method for saving changed name
+  */
   Future<void> saveSensorName(int sensorId, String newName) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('sensor_name_$sensorId', newName);

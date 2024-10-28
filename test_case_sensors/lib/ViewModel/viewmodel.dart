@@ -15,9 +15,11 @@ class SensorViewModel extends ChangeNotifier {
   List<Sensor> sensors = []; // Internal sensor list cache
   List<Sensor> get filteredSensors => getFilteredSensors();
 
+  /*
+  * Setter for sensors
+  */
   void setSensors(List<Sensor> sensorsList) {
     sensors = sensorsList;
-    //notifyListeners();
   }
 
   /*
@@ -42,7 +44,9 @@ class SensorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //  Method for loading updated names from shared_preferences
+  /*
+  *  Method for loading updated names from shared_preferences
+  */
   Future<void> loadUpdatedNames(List<Sensor> sensors) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -70,20 +74,24 @@ class SensorViewModel extends ChangeNotifier {
   */
   void updateSearchQuery(String value) {
     searchQuery = value.trim().toLowerCase();
+
     notifyListeners();
   }
 
-
+  /*
+  * Method for realizing search 
+  */
   void performSearch(BuildContext context, TextEditingController controller) {
-    final query = controller.text;
-    Provider.of<SensorViewModel>(context, listen:  false).updateSearchQuery(query);
+    Provider.of<SensorViewModel>(context, listen:  false).updateSearchQuery(controller.text);
   }
 
+  /*
+  * Method for reset search 
+  */
   void clearSearch(BuildContext context, TextEditingController controller) {
-    controller.clear();
     Provider.of<SensorViewModel>(context, listen:  false).updateSearchQuery('');
   }
-  
+
   /*
   * Method for getting filtered sensors according to searchQuery
   */
@@ -95,84 +103,6 @@ class SensorViewModel extends ChangeNotifier {
     return sensors
         .where((sensor) => sensor.name.toLowerCase().contains(searchQuery))
         .toList();
-  }
-
-  // Function to get a color by status
-  Color getStatusColor(int status) {
-    switch (status) {
-      case 1:
-        return Colors.green;
-      case 2:
-        return Colors.red;
-      case 3:
-        return Colors.red;
-      case 4:
-        return Colors.yellow;
-      case 5:
-        return Colors.green;
-      case 6:
-        return Colors.grey;
-      case 7:
-        return Colors.yellow;
-      case 8:
-        return Colors.yellow;
-      case 9:
-        return Colors.yellow;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  // Function to get an icon by status
-  IconData getStatusIcon(int status) {
-    switch (status) {
-      case 1:
-        return Icons.check_circle;
-      case 2:
-        return Icons.warning_outlined;
-      case 3:
-        return Icons.fireplace;
-      case 4:
-        return Icons.lock_open;
-      case 5:
-        return Icons.lock;
-      case 6:
-        return Icons.nearby_error_outlined;
-      case 7:
-        return Icons.battery_alert;
-      case 8:
-        return Icons.thermostat;
-      case 9:
-        return Icons.water;
-      default:
-        return Icons.help;
-    }
-  }
-
-  // Function to get an icon by status
-  String getStatusTXT(int status) {
-    switch (status) {
-      case 1:
-        return "Готов";
-      case 2:
-        return "Тревога";
-      case 3:
-        return "Пожар";
-      case 4:
-        return "Корпус открыт";
-      case 5:
-        return "Корпус закрыт";
-      case 6:
-        return "Потерян";
-      case 7:
-        return "Низкий заряд батареи";
-      case 8:
-        return "Событие по температуре";
-      case 9:
-        return "Событие по влажности";
-      default:
-        return "Неизвестно";
-    }
   }
 
   /*
@@ -198,6 +128,9 @@ class SensorViewModel extends ChangeNotifier {
     }
   }
 
+  /*
+  * Method for name validation
+  */
   String? validateName(String? value) {
     final emptyCheck = isEmpty(value);
     if (emptyCheck != null) return emptyCheck;
@@ -206,5 +139,89 @@ class SensorViewModel extends ChangeNotifier {
     if (specialSymbolCheck != null) return specialSymbolCheck;
 
     return null;
+  }
+
+  /*
+  * Function to get a color by status
+  */
+  Color getStatusColor(int status) {
+    switch (status) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.red;
+      case 3:
+        return Colors.red;
+      case 4:
+        return Colors.yellow;
+      case 5:
+        return Colors.green;
+      case 6:
+        return Colors.grey;
+      case 7:
+        return Colors.yellow;
+      case 8:
+        return Colors.yellow;
+      case 9:
+        return Colors.yellow;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  /*
+  * Function to get an icon by status
+  */
+  IconData getStatusIcon(int status) {
+    switch (status) {
+      case 1:
+        return Icons.check_circle;
+      case 2:
+        return Icons.warning_outlined;
+      case 3:
+        return Icons.fireplace;
+      case 4:
+        return Icons.lock_open;
+      case 5:
+        return Icons.lock;
+      case 6:
+        return Icons.nearby_error_outlined;
+      case 7:
+        return Icons.battery_alert;
+      case 8:
+        return Icons.thermostat;
+      case 9:
+        return Icons.water;
+      default:
+        return Icons.help;
+    }
+  }
+
+  /*
+  * Function to get an icon by status
+  */
+  String getStatusTXT(int status) {
+    switch (status) {
+      case 1:
+        return "Готов";
+      case 2:
+        return "Тревога";
+      case 3:
+        return "Пожар";
+      case 4:
+        return "Корпус открыт";
+      case 5:
+        return "Корпус закрыт";
+      case 6:
+        return "Потерян";
+      case 7:
+        return "Низкий заряд батареи";
+      case 8:
+        return "Событие по температуре";
+      case 9:
+        return "Событие по влажности";
+      default:
+        return "Неизвестно";
+    }
   }
 }

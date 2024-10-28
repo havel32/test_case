@@ -1,15 +1,24 @@
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import '../Models/model.dart';
-
 
 /*
 *   ViewModel class that interacts with the SensorModel and provides data 
 *   to View.
 */
-class SensorViewModel extends ChangeNotifier{
+class SensorViewModel extends ChangeNotifier {
   final SensorModel model;
-  SensorViewModel({required this.model });
+  SensorViewModel({required this.model});
+
+  String searchQuery = '';
+  List<Sensor> sensors = []; // Internal sensor list cache
+  List<Sensor> get filteredSensors => getFilteredSensors();
+
+  void setSensors(List<Sensor> sensorsList) {
+    sensors = sensorsList;
+    //notifyListeners();
+  }
 
   /*
   *   Method for deleting extra spaces from input
@@ -21,18 +30,13 @@ class SensorViewModel extends ChangeNotifier{
   /* 
   *   Updates the name of a sensor based on its [sensorId] and [newName].
   *   Locates the sensor in the provided list and modifies its name.
-  */ 
-  void updateSensorName(List<Sensor> sensors, int sensorId, String newName) {
-    //  Cleaning input name
+  */
+  void updateSensorName(int sensorId, String newName) {
+    
     final cleanedName = cleanUpSpaces(newName);
-
-    //print(sensorId);
     final sensor = sensors.firstWhere((s) => s.sensorId == sensorId);
-
-    //print('${sensor.sensorId} with name ${sensor.name} found');
     sensor.name = cleanedName;
 
-    //print('$Renameing to $newNameTrimmed');
     model.saveSensorName(sensorId, cleanedName);
 
     notifyListeners();
@@ -42,12 +46,14 @@ class SensorViewModel extends ChangeNotifier{
   Future<void> loadUpdatedNames(List<Sensor> sensors) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    for (var sensor in sensors){
+    for (var sensor in sensors) {
       String? updatedName = prefs.getString('sensor_name_${sensor.sensorId}');
-      if (updatedName != null){
+      if (updatedName != null) {
         sensor.name = updatedName;
       }
     }
+
+    notifyListeners();
   }
 
   /*
@@ -59,7 +65,39 @@ class SensorViewModel extends ChangeNotifier{
     return sensors;
   }
 
-  // Function to get a color by status 
+  /*
+  * Method for updating searchQuery with notify
+  */
+  void updateSearchQuery(String value) {
+    searchQuery = value.trim().toLowerCase();
+    notifyListeners();
+  }
+
+
+  void performSearch(BuildContext context, TextEditingController controller) {
+    final query = controller.text;
+    Provider.of<SensorViewModel>(context, listen:  false).updateSearchQuery(query);
+  }
+
+  void clearSearch(BuildContext context, TextEditingController controller) {
+    controller.clear();
+    Provider.of<SensorViewModel>(context, listen:  false).updateSearchQuery('');
+  }
+  
+  /*
+  * Method for getting filtered sensors according to searchQuery
+  */
+  List<Sensor> getFilteredSensors() {
+    if (searchQuery.isEmpty) {
+      return sensors;
+    }
+
+    return sensors
+        .where((sensor) => sensor.name.toLowerCase().contains(searchQuery))
+        .toList();
+  }
+
+  // Function to get a color by status
   Color getStatusColor(int status) {
     switch (status) {
       case 1:
@@ -140,12 +178,11 @@ class SensorViewModel extends ChangeNotifier{
   /*
   * Method to check if the input contains any special characters except space, "-", "_"
   */
-  String? containsSpecialSymbol(String input){
+  String? containsSpecialSymbol(String input) {
     final specialCharRegExp = RegExp(r'^[A-Za-zА-яЁё0-9-_\s]+$');
-    if (!specialCharRegExp.hasMatch(input)){
+    if (!specialCharRegExp.hasMatch(input)) {
       return 'Invalid input! Special symbols are not allowed in the name of sensor, exept "-", "_"';
-    }
-    else{
+    } else {
       return null;
     }
   }
@@ -153,13 +190,21 @@ class SensorViewModel extends ChangeNotifier{
   /*
   * Method to check if input is empty
   */
-  String? isEmpty(String? value){
-    if (value == null || cleanUpSpaces(value).isEmpty == true){
+  String? isEmpty(String? value) {
+    if (value == null || cleanUpSpaces(value).isEmpty == true) {
       return 'Invalid input! Please enter a sensor name.';
-    }
-    else{
+    } else {
       return null;
     }
   }
-}
 
+  String? validateName(String? value) {
+    final emptyCheck = isEmpty(value);
+    if (emptyCheck != null) return emptyCheck;
+
+    final specialSymbolCheck = containsSpecialSymbol(value!);
+    if (specialSymbolCheck != null) return specialSymbolCheck;
+
+    return null;
+  }
+}

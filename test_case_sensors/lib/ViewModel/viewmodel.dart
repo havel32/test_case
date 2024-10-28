@@ -1,5 +1,4 @@
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import '../Models/model.dart';
 
@@ -40,22 +39,6 @@ class SensorViewModel extends ChangeNotifier {
     sensor.name = cleanedName;
 
     model.saveSensorName(sensorId, cleanedName);
-
-    notifyListeners();
-  }
-
-  /*
-  *  Method for loading updated names from shared_preferences
-  */
-  Future<void> loadUpdatedNames(List<Sensor> sensors) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    for (var sensor in sensors) {
-      String? updatedName = prefs.getString('sensor_name_${sensor.sensorId}');
-      if (updatedName != null) {
-        sensor.name = updatedName;
-      }
-    }
 
     notifyListeners();
   }
